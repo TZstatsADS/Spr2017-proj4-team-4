@@ -81,3 +81,9 @@ for(i in 1:length(data.files)){
   
 }
 names(data_list)<- query.list
+
+for(i in 1:14) {
+  n<- length(data_list[[i]])
+  doc.names<- paste(query.list[i], 1:n, sep = " ") 
+  names(data_list[[i]])<- doc.names
+}
