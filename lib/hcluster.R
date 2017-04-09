@@ -38,7 +38,7 @@ doc_format<- vector("list", 14)
 for(i in 1:14) {
   format_fun<- function(lllist) {
     t<- table(lllist)
-    vec1<- sapply(names(t), index, a=vocab[[i]])-1
+    vec1<- as.numeric(sapply(names(t), index, a=vocab[[i]]))-1
     vec2<- as.numeric(t)
     m<- matrix(as.integer(c(vec1, vec2)), ncol = 2)
     return(t(m))
@@ -48,7 +48,7 @@ for(i in 1:14) {
 names(doc_format)<- query.list
 
 # apply LDA
-k<- 20
+k<- 100
 beta <- 0.01
 alpha <- k/50
 try<- lda.collapsed.gibbs.sampler(doc_format$`A Gupta`,k, vocab$`A Gupta`,
@@ -77,8 +77,7 @@ for(i in 1:n) {
     distance[j,i]<- distance[i,j]
   }
 }
-rownames(distance)<- colnames(distance) <- names(doc_format$`A Gupta`)
-
+rownames(distance)<- colnames(distance) <- c(1:n)
 
 # Agglomerative Clustering
 hcluster <- hclust(as.dist(distance), "ward.D")
@@ -92,5 +91,21 @@ showresult<- function(mat) {
   }
   return(result)
 }
-showresult(hclust_id)
+result<- showresult(hclust_id)
+
+# compute error rate
+error_rate<- function(result) {
+  err_cluster<- function(list) {
+    l<- length(list)
+    cluster_id<- rep(NA, l)
+    for(i in 1:l) {
+      cluster_id[i] <- (data_list$`A Gupta`[[as.numeric(list(i))]])[[1]]
+    }
+    t<- table(cluster_id)
+    return((l - max(t))/l)
+  }
+  err <- sapply(result, err_cluster)
+  return(mean(err))
+}
+error_rate(result)
 
