@@ -47,29 +47,50 @@ for(i in 1:14) {
 }
 names(doc_format)<- query.list
 
-k<- 10
+# apply LDA
+k<- 20
+beta <- 0.01
+alpha <- k/50
 try<- lda.collapsed.gibbs.sampler(doc_format$`A Gupta`,k, vocab$`A Gupta`,
-                            num.iterations = 500, alpha = k/50, eta = 0.01)
+                            num.iterations = 1000, alpha = alpha, eta = beta)
 
 # Calculate topic-word matrix
-h <- try$topics
+hw <- try$topics
 W <- length(vocab$`A Gupta`)
-beta <- 0.01
-a <- matrix(NA,nrow=k,ncol=W)
-sum_h <- rowSums(h)
+sum_h <- rowSums(hw)
 matrix_sumh <- matrix(rep(sum_h,k),nrow=k,ncol=W)
-a <- (h+beta)/(matrix_sumh+W*beta)
+phi <- (hw+beta)/(matrix_sumh+W*beta)
 
 # Calculate topic-document matrix
 hd <- try$document_sums
-alpha <- k/50
 D <- length(doc_format$`A Gupta`)
-theta <- matrix(NA,nrow=k,ncol=D)
 sum_hd <- colSums(hd)
 matrix_sumhd <- matrix(rep(sum_hd,each=k),nrow=k,ncol=D)
 theta <- (hd+alpha)/(matrix_sumhd+k*alpha)
 
+# Calculate distance matrix
+n<- ncol(theta)
+distance<- matrix(0, nrow = n, ncol = n)
+for(i in 1:n) {
+  for(j in 1:n) {
+    distance[i,j]<- sqrt(sum((theta[,i]-theta[,j])^2))
+    distance[j,i]<- distance[i,j]
+  }
+}
+rownames(distance)<- colnames(distance) <- names(doc_format$`A Gupta`)
+
+
 # Agglomerative Clustering
-topic_document <- data.frame(t(theta))
-hcluster <- hclust(dist(topic_document), "complete")
+hcluster <- hclust(as.dist(distance), "ward.D")
+hclust_id <- cutree(hcluster, k=k)
 plot(hcluster, hang = -1)
+rect.hclust(hcluster, k=k)
+showresult<- function(mat) {
+  result<- vector("list", k)
+  for(i in 1:k) {
+    result[[i]]<- names(mat)[mat == i]
+  }
+  return(result)
+}
+showresult(hclust_id)
+
