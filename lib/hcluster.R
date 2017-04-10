@@ -1,5 +1,6 @@
 library(lda)
 source("cleandata.R")
+source("evaluation_measures.R")
 
 corpus<- function(llist){
   
@@ -48,7 +49,7 @@ for(i in 1:14) {
 names(doc_format)<- query.list
 
 # apply LDA
-k<- 200
+k<- 5
 beta <- 0.01
 alpha <- k/50
 try<- lda.collapsed.gibbs.sampler(doc_format$`A Gupta`,k, vocab$`A Gupta`,
@@ -69,7 +70,7 @@ matrix_sumhd <- matrix(rep(sum_hd,each=k),nrow=k,ncol=D)
 theta <- (hd+alpha)/(matrix_sumhd+k*alpha)
 
 colnames(theta) <- c(1:ncol(theta))
-distance<- dist(t(theta))
+distance<- dist(data.frame(t(theta)))
 
 # Agglomerative Clustering
 clust.num<- 26
@@ -87,18 +88,17 @@ showresult<- function(mat) {
 result<- showresult(hclust_id)
 
 # compute error rate
-error_rate<- function(result) {
-  err_cluster<- function(list) {
-    l<- length(list)
-    cluster_id<- rep(NA, l)
-    for(i in 1:l) {
-      cluster_id[i] <- (data_list$`A Gupta`[[as.numeric(list[i])]])[1]
-    }
-    t<- table(unlist(cluster_id))
-    return((l - max(t))/l)
+query.g<- function(llist){
+  gold<- function(lllist) {
+    gold_id<- lllist[[1]]
+    return(gold_id)
   }
-  err <- sapply(result, err_cluster)
-  return(mean(err))
+  return(sapply(llist, gold))
 }
-error_rate(result)
+gold_mat<- sapply(data_list, query.g)
+
+match_mat<- matching_matrix(gold_mat[[1]], hclust_id)
+
+performance_statistics(match_mat)
+
 
