@@ -48,7 +48,7 @@ for(i in 1:14) {
 names(doc_format)<- query.list
 
 # apply LDA
-k<- 100
+k<- 200
 beta <- 0.01
 alpha <- k/50
 try<- lda.collapsed.gibbs.sampler(doc_format$`A Gupta`,k, vocab$`A Gupta`,
@@ -68,25 +68,18 @@ sum_hd <- colSums(hd)
 matrix_sumhd <- matrix(rep(sum_hd,each=k),nrow=k,ncol=D)
 theta <- (hd+alpha)/(matrix_sumhd+k*alpha)
 
-# Calculate distance matrix
-n<- ncol(theta)
-distance<- matrix(0, nrow = n, ncol = n)
-for(i in 1:n) {
-  for(j in 1:n) {
-    distance[i,j]<- sqrt(sum((theta[,i]-theta[,j])^2))
-    distance[j,i]<- distance[i,j]
-  }
-}
-rownames(distance)<- colnames(distance) <- c(1:n)
+colnames(theta) <- c(1:ncol(theta))
+distance<- dist(t(theta))
 
 # Agglomerative Clustering
-hcluster <- hclust(as.dist(distance), "ward.D")
-hclust_id <- cutree(hcluster, k=k)
-plot(hcluster, hang = -1)
-rect.hclust(hcluster, k=k)
+clust.num<- 26
+hcluster <- hclust(distance, "complete")
+hclust_id <- cutree(hcluster, k=clust.num)
+# plot(hcluster, hang = -1)
+# rect.hclust(hcluster, k=k)
 showresult<- function(mat) {
-  result<- vector("list", k)
-  for(i in 1:k) {
+  result<- vector("list", clust.num)
+  for(i in 1:clust.num) {
     result[[i]]<- names(mat)[mat == i]
   }
   return(result)
@@ -99,9 +92,9 @@ error_rate<- function(result) {
     l<- length(list)
     cluster_id<- rep(NA, l)
     for(i in 1:l) {
-      cluster_id[i] <- (data_list$`A Gupta`[[as.numeric(list(i))]])[[1]]
+      cluster_id[i] <- (data_list$`A Gupta`[[as.numeric(list[i])]])[1]
     }
-    t<- table(cluster_id)
+    t<- table(unlist(cluster_id))
     return((l - max(t))/l)
   }
   err <- sapply(result, err_cluster)
