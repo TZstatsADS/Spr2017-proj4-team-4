@@ -23,7 +23,7 @@ setwd("~/Dropbox/Project4_WhoIsWho/doc")
 For each record in the dataset, there are some information we want to extract and store them in a regular form: canonical author id, coauthors, paper title, publication venue title. You may need to find regular matched in the input string vectors by using regex in R. Here is a tutorial for regular expression in R, which might help you <https://rstudio-pubs-static.s3.amazonaws.com/74603_76cd14d5983f47408fdf0b323550b846.html>
 
 ```{r}
-AKumar <- data.frame(scan("~/Dropbox/Project4_WhoIsWho/data/nameset/AKumar.txt",
+AKumar <- data.frame(scan("../data/nameset/AKumar.txt",
                           what = list(Coauthor = "", Paper = "", Journal = ""),
                           sep=">", quiet=TRUE),stringsAsFactors=FALSE)
 # This need to be modified for different name set
@@ -83,6 +83,17 @@ dtm_train <- create_dtm(it_train, vectorizer)
 Now we have DTM and can check its dimensions.
 ```{r}
 dim(dtm_train)
+dtm_train_df <- as.data.frame(as.matrix(dtm_train))
+pca <- prcomp(dtm_train_df, center=TRUE, scale=TRUE)
+summary(pca)
+
+## Find the number of principal components that captures 99% of the variance.
+lv <- cumsum(pca$sdev)/sum(pca$sdev)
+idx_99 <- min(which((lv > 0.99^2)==TRUE))
+
+pca_imps <- as.data.frame(pca$x[,1:idx_99])
+write.csv(pca_imps, file="pca.csv")
+
 ```
 
 As you can see, the DTM has `r nrow(dtm_train)` rows, equal to the number of citations, and `r ncol(dtm_train)`, equal to the number of unique terms excluding stopwords.
@@ -137,7 +148,7 @@ $$
 $$
 
 ```{r}
-source('~/Dropbox/Project4_WhoIsWho/lib/evaluation_measures.R')
+source('../lib/evaluation_measures.R')
 matching_matrix_hclust <- matching_matrix(AKumar$AuthorID,result_hclust)
 performance_hclust <- performance_statistics(matching_matrix_hclust)
 matching_matrix_sclust <- matching_matrix(AKumar$AuthorID,result_sclust)
