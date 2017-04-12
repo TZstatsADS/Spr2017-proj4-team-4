@@ -14,7 +14,7 @@ Term: Spring 2017
 	+ Zishuo (Jason) Li
 + Project summary: Author disambiguation is a prominent problem in text analysis. Being able to distinguish whether two articles both written by "John Smith" are truly written by the same person is a non-trivial problem in natural language processing. In this project we explore two papers focusing on this problem of author disambiguation and attempt to emulate their experimental processes.
 
-The first (referred to throughout as "Paper 4") is authored by Song, Yang, et al. entitled "Efficient topic-based unsupervised name disambiguation.", 
+The first (referred to throughout as "Paper 4") is authored by Song, Yang, et al. entitled "Efficient topic-based unsupervised name disambiguation.".
 
 The second paper (referred to throughout as "Paper 5") is authored by Culotta, Aron, et al. entitled "Author Disambiguation using Error-driven Machine Learning with a Ranking Loss Function". Specificially within this paper we refer to the C/E/Mr experimental process.
 	
