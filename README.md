@@ -20,7 +20,7 @@ The second paper (referred to throughout as "Paper 5") is authored by Culotta, A
 	
 **Contribution statement**: 
 
-CY and ZF cleaned the raw data, analyzed the paper entitled "" and developed the LDA model represented in paper 4.
+CY and ZF cleaned the raw data, analyzed the paper 4 and developed the LDA model represented within the paper.
 
 BH, ZL and SR analyzed paper 5, focusing on the C/E/Mr workflow. BH worked on the MIRA ranking function (Mr). SR and ZL worked on the clusterwise scoring function (C) in R and Python respectively. ZL implemented the error-driven training function (E).
 
