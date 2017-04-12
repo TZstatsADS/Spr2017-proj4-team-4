@@ -1,0 +1,118 @@
+---
+title: "Untitled"
+author: "Sean Reddy"
+date: "4/11/2017"
+output: pdf_document
+---
+
+## Step 0: Load the packages, specify directories
+```{r, warning=FALSE}
+start.time0 <- Sys.time()
+if (!require("lda")) install.packages("lda")
+library(lda)
+source("../lib/cleandata.R")
+source("../lib/evaluation_measures.R")
+```
+
+## Step 1: Clean all the data and do the preparation work to run LDA and hclust
+```{r}
+# set up the corpus of each document
+corpus<- function(llist){
+  document<- function(lllist) {
+    words_apperance <- c(unlist(strsplit(lllist[[4]], " ")), unlist(strsplit(lllist[[5]], " ")))
+    name_appearance <- unlist(lllist[[3]])
+    doc <- list(words = words_apperance, name = name_appearance)
+    return(doc)
+  }
+  return(lapply(llist, document))
+}
+doc_corpus<- lapply(data_list, corpus)
+
+# extract all words(coauthor names, title of the paper and published journal of each documentation)
+allwords_fun<- function(llist) {
+  allwords_fun1<- function(lllist) {
+    return(c(lllist$name, lllist$words))
+  }
+  return(lapply(llist, allwords_fun1))
+}
+doc_allwords<- lapply(doc_corpus, allwords_fun)
+
+# the vocab(all words) used in the documents of each name)
+vocab_fun<- function(llist) {
+  vocab<- c()
+  n<- length(llist)
+  for(i in 1:n){
+    vocab<- c(vocab,llist[[i]])
+  }
+  vocab<- unique(vocab)
+  return(vocab)
+}
+vocab<- lapply(doc_allwords, vocab_fun)
+
+vocab
+
+# extract the Gold standard clusters for each author name
+query.g<- function(llist){
+  gold<- function(lllist) {
+    gold_id<- lllist[[1]]
+    return(gold_id)
+  }
+  return(sapply(llist, gold))
+}
+gold_mat<- sapply(data_list, query.g)
+
+
+# construct the list format we should use in the code
+index<- function(x,a) {return(which(a==x))}
+doc_format<- vector("list", 14)
+for(i in 1:14) {
+  format_fun<- function(lllist) {
+    t<- table(lllist)
+    vec1<- as.numeric(sapply(names(t), index, a=vocab[[i]]))-1
+    vec2<- as.numeric(t)
+    m<- matrix(as.integer(c(vec1, vec2)), ncol = 2)
+    return(t(m))
+  }
+  doc_format[[i]] <- lapply(doc_allwords[[i]], format_fun)
+}
+names(doc_format)<- query.list
+
+```
+
+```{r}
+numRecords <- length(doc_format[[1]])
+numUniqueWords <- length(vocab[[1]])+1
+agupta_mat <- matrix(ncol=numUniqueWords, nrow=numRecords)
+allWordIndices <- 0:length(vocab[[1]])
+
+  
+for (i in 1:numRecords){
+  
+  wordsPres <- as.data.frame(doc_format[[1]][i])
+  vec_wordsPres <- unlist(rep(wordsPres[1,], wordsPres[2,]))
+  levelled_wordsPres <- as.data.frame(table(factor(vec_wordsPres, levels=allWordIndices)))
+  agupta_mat[i,] <- levelled_wordsPres$Freq
+
+}
+
+wordOccurrenceDataframe <- as.data.frame(agupta_mat)
+
+```
+
+## Step 2: Clusterwise Scoring Function
+
+```{R}
+
+library(mclust)
+
+clusters<-Mclust(wordOccurrenceDataframe)
+clusters$z
+
+# clusters$z yields the probabilities that each point belongs to each cluster, we can use this as an interpretation for score: "s(f(tk,⇤)) indicates the preference for the prediction that all the elements {Ri ...Rj} co-refer."
+
+```
+
+
+
+
+
