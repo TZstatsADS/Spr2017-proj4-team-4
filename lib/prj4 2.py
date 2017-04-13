@@ -29,11 +29,13 @@ def score(var,lamb):
 
 
 for x in range(5):
-    dtm2=loop(dtm2)
+    lamb=loop(dtm5)
 
-dtm5=dtm2.copy()
+dtm6=dtm5.copy()
 
 
+
+score(ts,lamb)
 
 
 

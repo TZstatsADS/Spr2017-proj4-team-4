@@ -56,7 +56,7 @@ def precision(group):
     return (Precision)  
     
 
-def mira(la,tao,ts,ts1,par=100):
+def mira(la,tao,ts,ts1,par=5000):
     n_ft=len(lamb)
 
     accumulator = list()
@@ -75,9 +75,9 @@ def mira(la,tao,ts,ts1,par=100):
     return(opt)
 
 
-
-def loop(dtm,tao=0.6  ):
+def loop(dtm,tao=10000):
     global lamb
+    global dtm5
     group_unique=np.unique(dtm.index)
     cluster_number=group_unique.size
     cor_list=[]
@@ -145,10 +145,12 @@ def loop(dtm,tao=0.6  ):
                         print([i,j])
                         ts1=Ts(i,j)                 
                         lamb=mira(la=lamb,tao=tao,ts=ts,ts1=ts1)  
+                        dtm5=dtm6.copy()
                         break
             if judge_precision> precision_st:
                 break
-    print(np.unique(dtm.index).size)                
+    print(np.unique(dtm.index).size) 
+    print(lamb)               
     return (lamb) 
 
 
