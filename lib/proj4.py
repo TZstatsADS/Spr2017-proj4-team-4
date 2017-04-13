@@ -7,6 +7,10 @@ import re
 import os
 import pandas as pd
 import numpy as np
+import nltk
+import pylab as pl
+from scipy import optimize
+from numpy import linalg as LA
 os.getcwd()
 os.chdir('C:\\Users\\ZISHUO LI\\Documents\\GitHub\\Spr2017-proj4-team-4\\data\\nameset\\')
 with open('AKumar.txt') as f:
@@ -14,6 +18,8 @@ with open('AKumar.txt') as f:
 
 content=pd.DataFrame([x.lower().rstrip('\n').split('<>') for x in content])
 content.columns=['author','title','publish']
+content2=content.copy()
+nrows=content2.shape[0]
 
 author=content['author']
 author_splited=[x.split(';') for x in author]
@@ -109,13 +115,10 @@ def list_match(x,y):
 cluster=list(range(len(author_new)))
 
 #judge cluster
-author_new2=author_new.copy()
-author_set=[set(x) for x in author_new2]
-
 publish_set=[set([x]) for x in content['publish']]
 title_set=[set([x]) for x in content['title']]
-for i in range(len(author_new2)):
-    for j in range(i + 1, len(author_new2)):
+for i in range(len(author_new)):
+    for j in range(i + 1, len(author_new)):
         inter=list_match(author_new[i], author_new[j])
         if inter==True:
             cluster[j]=cluster[i]
@@ -123,10 +126,6 @@ for i in range(len(author_new2)):
             publish_set[j]=publish_set[i].copy()
             title_set[i].update(title_set[j])
             title_set[j]=title_set[i].copy()
-
-            author_set[i].update(author_set[j])
-            author_set[j]=author_set[i].copy()
-            
 
 #cluster_index,counts=np.unique(cluster,return_counts=True)
 cluster=pd.DataFrame(cluster)
@@ -136,12 +135,15 @@ dd=pd.concat([cluster,content['author'],dd1],axis=1)
 
 
 
-
 title_set=pd.DataFrame([';'.join(x) for x in title_set])
 publish_set=pd.DataFrame([';'.join(x) for x in publish_set])
 dd3=pd.concat([cluster,content['author'],title_set],axis=1)
 
-dd3.to_csv('dd3.txt')
+
+
+title_set=pd.DataFrame(title_set)
+
+title_set.to_csv('dd5.csv')
 
 
 
