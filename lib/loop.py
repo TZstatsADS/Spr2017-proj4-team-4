@@ -54,8 +54,8 @@ def precision(group):
     print(' '.join(['Accuracy:',str(Accuracy)]))
     print(' '.join(['Precision:',str(Precision)])) 
     return (Precision)  
-    
-
+ 
+   
 def mira(la,tao,ts,ts1,par=5000):
     n_ft=len(lamb)
 
@@ -66,7 +66,7 @@ def mira(la,tao,ts,ts1,par=5000):
         return LA.norm([a-b for a,b in zip(x,lamb)])
 
     def constraint1(x):
-        return np.atleast_1d(-np.inner(x,ts)+np.inner(x,ts1)+par)
+        return np.atleast_1d(np.inner(x,ts)-np.inner(x,ts1)-par)
     def constraint2(x):
         return np.atleast_1d(-tao+np.inner(x,ts))
 
@@ -75,9 +75,10 @@ def mira(la,tao,ts,ts1,par=5000):
     return(opt)
 
 
-def loop(dtm,tao=10000):
+def loop(dtm,tao=5000):
     global lamb
-    global dtm5
+    global dtm_index_copy
+    global group_unique
     group_unique=np.unique(dtm.index)
     cluster_number=group_unique.size
     cor_list=[]
@@ -119,10 +120,8 @@ def loop(dtm,tao=10000):
             else:
                 dtm_new.extend([x])
         ''' store dtm_new into dtm index'''
-        dtm.index=dtm_new
-   
-    '''accuration part'''
-    
+        dtm.index=dtm_new   
+    '''accuration part'''    
     group=dtm.index.copy() 
     precision_st=precision(group)
     
@@ -145,7 +144,7 @@ def loop(dtm,tao=10000):
                         print([i,j])
                         ts1=Ts(i,j)                 
                         lamb=mira(la=lamb,tao=tao,ts=ts,ts1=ts1)  
-                        dtm5=dtm6.copy()
+                        dtm=dtm2.copy()
                         break
             if judge_precision> precision_st:
                 break
@@ -153,13 +152,3 @@ def loop(dtm,tao=10000):
     print(lamb)               
     return (lamb) 
 
-
-
-    
-dtm4=dtm.copy()
-np.unique(dtm2.index).size
-
-
-len(ts)
-kk=lamb.copy()
-np.equal(kk,lamb)
