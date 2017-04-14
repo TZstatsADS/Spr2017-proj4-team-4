@@ -211,6 +211,9 @@ def precision(group):
     Accuracy=(A+D)/(A+B+C+D)
     print(' '.join(['Accuracy:',str(Accuracy)]))
     print(' '.join(['Precision:',str(Precision)])) 
+    print(' '.join(['Recall:',str(Recall)])) 
+    print(' '.join(['F1:',str(F1)])) 
+
     return (Accuracy)  
  
 '''mira function is used to update the paramter, 
@@ -236,12 +239,12 @@ def mira(la,tao,ts,ts1,par=5000):
 
 '''Loop is the main part of our strategy, use loop to generate the best lamda
 '''
-def loop(dtm,tao=5000):
+def loop(dtm,tao=8000):
     global lamb
     global dtm_index_copy
     global group_unique
-    global dtm
-#This part is the initial assignment part    
+
+    #This part is the initial assignment part    
     group_unique=np.unique(dtm.index)
     cluster_number=group_unique.size
     cor_list=[]
@@ -315,6 +318,7 @@ def loop(dtm,tao=5000):
     print(np.unique(dtm.index).size) 
     print(lamb)               
     return (lamb) 
+
 
 '''this part to generate the rigth lamda, takes a long time'''
 n=0
