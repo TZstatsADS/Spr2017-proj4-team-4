@@ -20,10 +20,10 @@ The second paper (referred to throughout as "Paper 5") is authored by Culotta, A
 
 	
 **paper five step **:
-First, we deal with the data with author variable, the file is at the beginning part of 'prj4 final.py'. 
-Second, after we clean the data with author, we export the title list based on first step and the file exported is called 'dd5.csv'.
-Third, we use main.R to select and process features with PCA, we got 102 features of AKumar.txt. Then we exported 'PCA.csv'
-Finally, we use the last part of 'proj4 final.py' to loop and get best lamda for Akumar.txt. Then exported 'lamda.csv' & 'result.csv'
++ First, we deal with the data with author variable, the file is at the beginning part of 'prj4 final.py'. 
++ Second, after we clean the data with author, we export the title list based on first step and the file exported is called 'dd5.csv'.
++ Third, we use main.R to select and process features with PCA, we got 102 features of AKumar.txt. Then we exported 'PCA.csv'
++ Finally, we use the last part of 'proj4 final.py' to loop and get best lamda for Akumar.txt. Then exported 'lamda.csv' & 'result.csv'
 
 	
 **Contribution statement**: 
