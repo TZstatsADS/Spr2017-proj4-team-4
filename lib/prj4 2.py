@@ -14,7 +14,6 @@ dtm3=dtm.copy()
 
 
 c=dtm.shape[1]
-r=dtm.shape[0]
 
 lamb=[1/c]*c
 
@@ -27,17 +26,23 @@ def cor(x,y):
 def score(var,lamb):
     return (sum(var*lamb))
 
+n=0
+while np.unique(dtm.index).size>=14 or n<1000: 
+    lamb=loop(dtm)
+    n+=1 
+ 
 
-for x in range(5):
-    lamb=loop(dtm5)
+dtm2=dtm.copy()
+dtm3=dtm.copy()
 
-dtm6=dtm5.copy()
-
-
+dtm=dtm3.copy()
 
 score(ts,lamb)
 
 
+    
+
+np.unique(dtm3.index).size
 
 
 
