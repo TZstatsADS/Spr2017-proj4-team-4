@@ -19,7 +19,7 @@ The first (referred to throughout as "Paper 4") is authored by Song, Yang, et al
 The second paper (referred to throughout as "Paper 5") is authored by Culotta, Aron, et al. entitled "Author Disambiguation using Error-driven Machine Learning with a Ranking Loss Function". Specificially within this paper we refer to the C/E/Mr experimental process.
 
 	
-**paper five step **:
+**How to reproduce the algorithm in Paper 5**:
 + First, we deal with the data with author variable, the file is at the beginning part of 'prj4 final.py'. 
 + Second, after we clean the data with author, we export the title list based on first step and the file exported is called 'dd5.csv'.
 + Third, we use main.R to select and process features with PCA, we got 102 features of AKumar.txt. Then we exported 'PCA.csv'
